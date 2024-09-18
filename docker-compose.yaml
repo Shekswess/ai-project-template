@@ -60,8 +60,9 @@ services:
       - "5000:5000"
     environment:
       - DATABASE_URL=mysql+pymysql://mlflow:mlflow@db_mlflow:3306/mlflow
+      - HOSTNAME = ${HOSTNAME:-localhost}
     command: >
-      sh -c "pip install PyMySQL[rsa] && mlflow server --backend-store-uri ${DATABASE_URL} --default-artifact-root /mlartifacts --host 0.0.0.0"
+      sh -c "pip install PyMySQL[rsa] && mlflow server --backend-store-uri ${DATABASE_URL} --default-artifact-root /mlartifacts --host ${HOSTNAME}"
     volumes:
       - mlflow_artifacts:/mlartifacts
 
