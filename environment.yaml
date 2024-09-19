@@ -1,4 +1,4 @@
-name: AI
+name: ai-project
 channels:
   - conda-forge
   - defaults
