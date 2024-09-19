@@ -1,0 +1,75 @@
+services:
+  db_langfuse:
+    image: postgres
+    restart: always
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langfuse"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+    environment:
+      - POSTGRES_USER=langfuse
+      - POSTGRES_PASSWORD=langfuse
+      - POSTGRES_DB=langfuse
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  langfuse-server:
+    image: langfuse/langfuse
+    depends_on:
+      db_langfuse:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://langfuse:langfuse@db_langfuse:5432/langfuse
+      - NEXTAUTH_SECRET=mysecret
+      - SALT=mysalt
+      - ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000
+      - NEXTAUTH_URL=http://localhost:3000
+      - TELEMETRY_ENABLED=${TELEMETRY_ENABLED:-true}
+      - LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES=${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-false}
+      - HOSTNAME = ${HOSTNAME:-localhost}
+
+  db_mlflow:
+    image: mysql:8-oracle
+    restart: always
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      - MYSQL_DATABASE=mlflow
+      - MYSQL_USER=mlflow
+      - MYSQL_PASSWORD=mlflow
+      - MYSQL_ROOT_PASSWORD=mlflow
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql  # Renamed volume to prevent future conflicts
+
+  mlflow_server:
+    image: ghcr.io/mlflow/mlflow
+    depends_on:
+      db_mlflow:
+        condition: service_healthy
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://mlflow:mlflow@db_mlflow:3306/mlflow
+      - HOSTNAME = ${HOSTNAME:-localhost}
+    command: >
+      sh -c "pip install PyMySQL[rsa] && mlflow server --backend-store-uri ${DATABASE_URL} --default-artifact-root /mlartifacts --host ${HOSTNAME}"
+    volumes:
+      - mlflow_artifacts:/mlartifacts
+
+volumes:
+  mysql_data:
+    driver: local
+  postgres_data:
+    driver: local
+  mlflow_artifacts:
+    driver: local
