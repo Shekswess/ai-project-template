@@ -1,6 +1,6 @@
 # ai-project-template
 
-[![Python 3.11](https://img.shields.io/badge/python-3.11-blue.svg)](https://www.python.org/downloads/release/python-3110/)
+[![Python 3.12](https://img.shields.io/badge/python-3.12-blue.svg)](https://www.python.org/downloads/release/python-3110/)
 
 Welcome to the **AI Project Template** repository! This template is designed to **streamline the development** and **deployment** of AI/ML/MLOps/LLMOps projects. It provides a comprehensive setup for experiment tracking, model versioning, monitoring, tracing, and efficient project management, ensuring that all critical aspects of an AI project are covered.
 
@@ -12,12 +12,12 @@ Welcome to the **AI Project Template** repository! This template is designed to 
 - **IaC Directory**: Infrastructure as Code (IaC) scripts for cloud deployment.
 - **Notebooks Directory**: Jupyter notebooks for data analysis and experiments.
 - **Results Directory**: Store experiment results, logs, and models.
-- **Source Code Directory**: Modularized source code for models, pipelines, utilities.
+- **Source Code Directory**: Modularized source code for models, pipelines, utilities, schemas, and more.
 - **Tests Directory**: Unit and integration tests using `pytest`.
 - **[pre-commit](https://pre-commit.com/)**: Configuration for linting, type checking, and secret detection.
-- **[Docker Compose](https://docs.docker.com/compose/)**: Setup for services like MLflow, Langfuse, databases, and storage.
+- **[Docker Compose](https://docs.docker.com/compose/)**: Setup for services like MLflow, OpenSearch, and more.
 - **[uv](https://docs.astral.sh/uv/)**: An extremely fast Python package and project manager
-- **[Pyproject.toml](https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/)**: Config for project, ruff linter, formatter, type checking, and testing.
+- **[pyproject.toml](https://pip.pypa.io/en/stable/reference/build-system/pyproject-toml/)**: Config for project, ruff linter, formatter, type checking, and testing.
 
 
 > [!NOTE]
@@ -27,28 +27,29 @@ Welcome to the **AI Project Template** repository! This template is designed to 
 
 ## 📁 Detailed Directory Breakdown
 
-- **`/config`**: Store all configuration files needed for your project.
+- **`/config/`**: Store all configuration files needed for your project.
   - Example: `config.yaml` can be used for setting up hyperparameters, API keys, or other environment variables.
 
-- **`/data`**: Structured data folders for different stages of the project.
-  - `raw/`: Raw data straight from the source.
-  - `processed/`: Cleaned and preprocessed data ready for use in models.
-  - `database/`: Database files if using local storage solutions.
+- **`/data/`**: Structured data folders for different stages of the project.
+  - `/raw/`: Raw data straight from the source.
+  - `/processed/`: Cleaned and preprocessed data ready for use in models.
+  - `/database/`: Database files if using local storage solutions.
 
-- **`/iac`**: Infrastructure as Code scripts for automating cloud deployments (e.g., AWS CloudFormation, Terraform).
+- **`/iac/`**: Infrastructure as Code scripts for automating cloud deployments (e.g., AWS CloudFormation, Terraform).
 
-- **`/notebooks`**: Jupyter notebooks for performing Exploratory Data Analysis (EDA), experimenting with models, and reporting.
+- **`/notebooks/`**: Jupyter notebooks for performing Exploratory Data Analysis (EDA), experimenting with models, and reporting.
   - Example: `00_example.ipynb` shows how a notebook looks in the project.
 
-- **`/results`**: Store experiment results, logs, and models.
+- **`/results/`**: Store experiment results, logs, and models.
 
-- **`/src`**: Main source code for your project.
+- **`/src/`**: Main source code for your project.
   - `/constants/`: Store project-wide constants (e.g., file paths, API endpoints).
   - `/models/`: Machine learning models (e.g., neural networks, decisi`on trees) scripts, classes, and functions.
+  - `/schemas/`: Data schemas and validation logic (e.g., Pydantic models).
   - `/pipelines/`: Data and model pipelines.
   - `/utils/`: Utility functions and helpers (e.g., data loaders, preprocessing functions).
 
-- **`/tests`**: Unit and integration tests.
+- **`/tests/`**: Unit and integration tests.
 
 ---
 
@@ -60,7 +61,7 @@ Welcome to the **AI Project Template** repository! This template is designed to 
 
 - **`.pre-commit-config.yaml`**: Configuration for [pre-commit](https://pre-commit.com/) hooks for linting, formatting, and type checking.
 
-- **`docker-compose.yaml`**: A Docker Compose configuration to spin up services such as [MLflow](https://mlflow.org/), [Langfuse](https://www.langfuse.com/), databases, and any additional tools.
+- **`docker-compose.yaml`**: A Docker Compose configuration to spin up services such as [MLflow](https://mlflow.org/), [OpenSearch](https://opensearch.org/), and more.
 
 - **`pyproject.toml`**: Configuration of the project, plus the configuration for formatting and linting. This file is used by [uv](https://docs.astral.sh/uv/) to manage the project and [ruff](https://docs.astral.sh/ruff/) for linting and formatting.
 
@@ -91,14 +92,24 @@ powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | ie
 uv install python
 ```
 
-### 4. **Install Dependencies**
+### 4a. **Install Default Dependencies**
 ```bash
 uv sync --all-extras --dev
 ```
 
-### 5. Start Docker Compose Services (Optional)
+### 4b. **Install your Project Specific Dependencies**
+```bash
+uv add <package_name>
+```
+
+### 5. **Start Docker Compose Services (Optional)**
 ```bash
 docker-compose up -d
+```
+
+### 6. **Run pre-commit Hooks (Optional)**
+```bash
+uv run pre-commit run --all-files
 ```
 
 
@@ -121,6 +132,7 @@ docker-compose up -d
 │   ├── constants             # Constants used in the project
 │   ├── models                # Machine learning model scripts
 │   ├── pipelines             # ML pipelines for preprocessing and modeling
+│   ├── schemas               # Data schemas and validation logic
 │   ├── utils                 # Utility functions
 │   └── execution.py          # Main execution script
 ├── tests                     # Unit and integration tests
