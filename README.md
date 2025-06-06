@@ -140,7 +140,8 @@ uv run pre-commit run --all-files
 ├── .env                      # Environment variables file
 ├── .gitignore                # Standard .gitignore file
 ├── .pre-commit-config.yaml   # Configuration for pre-commit hooks
-├── docker-compose.yaml       # Docker Compose setup for MLflow, Langfuse, and related services
+├── .python-version           # Python version for the project
+├── docker-compose.yaml       # Docker Compose setup for MLflow, OpenSearch and related services
 ├── pyproject.toml            # Configuration for formatting, linting, type-checking, and testing
 ├── README.md                 # Documentation for the project (you're reading it!)
 └── uv.lock                   # Lock file for uv package manager
