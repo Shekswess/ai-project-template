@@ -1,37 +1,86 @@
 services:
-  db_langfuse:
-    image: postgres
-    restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U langfuse"]
-      interval: 3s
-      timeout: 3s
-      retries: 10
-    environment:
-      - POSTGRES_USER=langfuse
-      - POSTGRES_PASSWORD=langfuse
-      - POSTGRES_DB=langfuse
-    ports:
-      - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
-  langfuse-server:
-    image: langfuse/langfuse
-    depends_on:
-      db_langfuse:
-        condition: service_healthy
-    ports:
-      - "3000:3000"
+  # This is the first node of the OpenSearch Cluster for storing data
+  opensearch-node1:
+    image: opensearchproject/opensearch:2.13.0
+    container_name: opensearch-node1
     environment:
-      - DATABASE_URL=postgresql://langfuse:langfuse@db_langfuse:5432/langfuse
-      - NEXTAUTH_SECRET=mysecret
-      - SALT=mysalt
-      - ENCRYPTION_KEY=0000000000000000000000000000000000000000000000000000000000000000
-      - NEXTAUTH_URL=http://localhost:3000
-      - TELEMETRY_ENABLED=${TELEMETRY_ENABLED:-true}
-      - LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES=${LANGFUSE_ENABLE_EXPERIMENTAL_FEATURES:-false}
-      - HOSTNAME = ${HOSTNAME:-localhost}
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - plugins.security.disabled=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Administrator123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data1:/usr/share/opensearch/data
+    ports:
+      - 9200:9200
+      - 9600:9600
+    networks:
+      - opensearch-net
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -I http://localhost:9200 | grep -q 'HTTP/1.1 200 OK'" ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  # This is the second node of the OpenSearch Cluster for storing data
+  opensearch-node2:
+    image: opensearchproject/opensearch:2.13.0
+    container_name: opensearch-node2
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node2
+      - discovery.seed_hosts=opensearch-node1,opensearch-node2
+      - cluster.initial_cluster_manager_nodes=opensearch-node1,opensearch-node2
+      - bootstrap.memory_lock=true
+      - "OPENSEARCH_JAVA_OPTS=-Xms1g -Xmx1g"
+      - plugins.security.disabled=true
+      - OPENSEARCH_INITIAL_ADMIN_PASSWORD=Administrator123!
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data2:/usr/share/opensearch/data
+    networks:
+      - opensearch-net
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -s -I http://localhost:9200 | grep -q 'HTTP/1.1 200 OK'" ]
+      interval: 10s
+      timeout: 10s
+      retries: 120
+
+  # This service is used for running OpenSearch Dashboards that interacts with OpenSearch Cluster (node1 and node2)
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.13.0
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601
+    expose:
+      - "5601"
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch-node1:9200","http://opensearch-node2:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+    networks:
+      - opensearch-net
+    depends_on:
+      opensearch-node1:
+        condition: service_healthy
+      opensearch-node2:
+        condition: service_healthy
 
   db_mlflow:
     image: mysql:8-oracle
@@ -49,7 +98,7 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - mysql_data:/var/lib/mysql  # Renamed volume to prevent future conflicts
+      - mysql_data:/var/lib/mysql # Renamed volume to prevent future conflicts
 
   mlflow_server:
     image: ghcr.io/mlflow/mlflow
@@ -69,7 +118,11 @@ services:
 volumes:
   mysql_data:
     driver: local
-  postgres_data:
-    driver: local
   mlflow_artifacts:
     driver: local
+  opensearch-data1:
+  opensearch-data2:
+
+networks:
+  opensearch-net:
+    driver: bridge
