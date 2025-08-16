@@ -92,5 +92,5 @@ dev = [
     "pytest-mock==3.14.1",
     "ruff==0.12.8",
     "ty==0.0.1a8",
-    "ipykernel==6.29.5"
+    "ipykernel==6.30.1"
 ]
