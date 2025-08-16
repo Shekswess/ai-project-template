@@ -8,8 +8,8 @@ requires-python = ">=3.12"
 dependencies = [
     "boto3==1.38.31",
     "loguru==0.7.3",
-    "mlflow==3.2.0",
-    "opensearch-py==2.8.0",
+    "mlflow==2.22.1",
+    "opensearch-py==3.0.0",
     "pydantic==2.11.5",
 ]
 
@@ -90,7 +90,7 @@ dev = [
     "pytest==8.4.1",
     "pytest-asyncio==1.1.0",
     "pytest-mock==3.14.1",
-    "ruff==0.12.8",
+    "ruff==0.12.9",
     "ty==0.0.1a8",
     "ipykernel==6.29.5"
 ]
