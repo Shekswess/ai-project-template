@@ -27,6 +27,10 @@ Welcome to the **AI Project Template** repository! This template is designed to 
 
 ## 📁 Detailed Directory Breakdown
 
+- **`/.github/`**: GitHub-specific configuration and workflows.
+  - `/workflows/`: Contains CI/CD workflow definitions for automated testing, building, and deployment.
+  - `dependabot.yaml`: Configuration for Dependabot to automatically update dependencies.
+
 - **`/config/`**: Store all configuration files needed for your project.
   - Example: `config.yaml` can be used for setting up hyperparameters, API keys, or other environment variables.
 
@@ -44,10 +48,11 @@ Welcome to the **AI Project Template** repository! This template is designed to 
 
 - **`/src/`**: Main source code for your project.
   - `/constants/`: Store project-wide constants (e.g., file paths, API endpoints).
-  - `/models/`: Machine learning models (e.g., neural networks, decisi`on trees) scripts, classes, and functions.
+  - `/models/`: Machine learning models (e.g., neural networks, decision trees) scripts, classes, and functions.
   - `/schemas/`: Data schemas and validation logic (e.g., Pydantic models).
   - `/pipelines/`: Data and model pipelines.
   - `/utils/`: Utility functions and helpers (e.g., data loaders, preprocessing functions).
+  - `main.py`: Main execution script for the project.
 
 - **`/tests/`**: Unit and integration tests.
 
@@ -118,6 +123,11 @@ uv run pre-commit run --all-files
 ## 🗂️ Repository Structure
 ```bash
 .
+├── .github                   # GitHub Actions workflows and configuration
+│   ├── dependabot.yaml       # Dependabot configuration for automated dependency updates
+│   └── workflows             # CI/CD workflow definitions
+│       └── uv-ci.yaml        # Continuous integration workflow using uv
+├── .venv                     # Virtual environment (created after installation)
 ├── config                    # Configuration files for your project
 │   └── config.yaml           # Example configuration file
 ├── data                      # Folder to store raw and processed data
@@ -130,11 +140,16 @@ uv run pre-commit run --all-files
 ├── results                   # Folder to store the results of experiments and models
 ├── src                       # Source code of your project
 │   ├── constants             # Constants used in the project
+│   │   └── __init__.py       # Package initialization file
 │   ├── models                # Machine learning model scripts
+│   │   └── __init__.py       # Package initialization file
 │   ├── pipelines             # ML pipelines for preprocessing and modeling
+│   │   └── __init__.py       # Package initialization file
 │   ├── schemas               # Data schemas and validation logic
+│   │   └── __init__.py       # Package initialization file
 │   ├── utils                 # Utility functions
-│   └── execution.py          # Main execution script
+│   │   └── __init__.py       # Package initialization file
+│   └── main.py               # Main execution script
 ├── tests                     # Unit and integration tests
 │   └── test_example.py       # Example test file using pytest
 ├── .env                      # Environment variables file
