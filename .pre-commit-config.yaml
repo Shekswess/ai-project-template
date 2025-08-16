@@ -1,5 +1,6 @@
 default_language_version:
     python: python3.12
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
@@ -20,19 +21,18 @@ repos:
       - id: mixed-line-ending
       - id: requirements-txt-fixer
 
-repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.11.13
     hooks:
       - id: ruff-check
-        args: [ --fix ]
+        args: [ --fix, --config=pyproject.toml]
       - id: ruff-format
 
   - repo: local
     hooks:
       - id: ty
         name: ty check
-        entry: uvx ty check . --ignore unresolved-import
+        entry: uvx ty check .
         language: python
 
   - repo: https://github.com/asottile/pyupgrade
