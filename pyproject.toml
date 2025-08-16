@@ -1,22 +1,19 @@
 [project]
 name = "ai-project-template"
-version = "3.0.0"
+version = "4.0.0"
 description = "The idea of this project(template) is to have a code framework prepared for any AI/ML/MLOps/LLMOps project"
 authors = [{name = "Bojan Jakimovski - Shekswess", email = "jakimovski_bojan@outlook.com"}]
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "boto3>=1.38.31",
-    "ipykernel>=6.29.5",
-    "loguru>=0.7.3",
-    "mlflow>=2.22.1",
-    "opensearch-py>=2.8.0",
-    "pydantic>=2.11.5",
+    "boto3==1.38.31",
+    "loguru==0.7.3",
+    "mlflow==2.22.1",
+    "opensearch-py==2.8.0",
+    "pydantic==2.11.5",
 ]
 
 [tool.ruff]
-
-# Exclude files and directories from being checked by Ruff.
 exclude = [
     ".bzr",
     ".direnv",
@@ -45,42 +42,55 @@ exclude = [
     "site-packages",
     "venv",
 ]
-
-# Same as Black
 line-length = 88
 indent-width = 4
 
 [tool.ruff.lint]
-
-# Enable all rules by default.
 select = ["I", "E", "F"]
-ignore = []
+ignore = ["E501"]
 
-# Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
 unfixable = []
 
-# Allow unused variables when underscore-prefixed.
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
 [tool.ruff.format]
-
-# Like Black, use double quotes for strings.
 quote-style = "double"
-
-# Like Black, indent with spaces, rather than tabs.
 indent-style = "space"
-
-# Like Black, respect magic trailing commas.
 skip-magic-trailing-comma = false
-
-# Like Black, automatically detect the appropriate line ending.
 line-ending = "auto"
+
+[tool.ty.rules]
+non-subscriptable = "warn"
+unused-ignore-comment = "warn"
+invalid-argument-type = "warn"
+invalid-parameter-default = "warn"
+unresolved-import = "warn"
+invalid-assignment = "warn"
+
+[tool.pytest.ini_options]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+markers = [
+    "live: marks tests that make live API calls (deselect with '-m \"not live\"')",
+    "asyncio: marks tests that use asyncio",
+]
+
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.2.0",
-    "pytest>=8.3.3",
-    "ruff>=0.6.8",
-    "ty>=0.0.1a8",
+    "pre-commit==4.3.0",
+    "pytest==8.4.1",
+    "pytest-asyncio==1.1.0",
+    "pytest-mock==3.14.1",
+    "ruff==0.12.8",
+    "ty==0.0.1a8",
+    "ipykernel==6.29.5"
 ]
