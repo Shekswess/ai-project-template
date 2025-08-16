@@ -9,7 +9,7 @@ dependencies = [
     "boto3==1.38.31",
     "loguru==0.7.3",
     "mlflow==2.22.1",
-    "opensearch-py==2.8.0",
+    "opensearch-py==3.0.0",
     "pydantic==2.11.5",
 ]
 
