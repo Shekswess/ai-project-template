@@ -6,7 +6,7 @@ authors = [{name = "Bojan Jakimovski - Shekswess", email = "jakimovski_bojan@out
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
-    "boto3==1.40.40",
+    "boto3==1.40.55",
     "loguru==0.7.3",
     "mlflow==3.5.0",
     "opensearch-py==3.0.0",
