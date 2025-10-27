@@ -8,7 +8,7 @@ requires-python = ">=3.12"
 dependencies = [
     "boto3==1.40.55",
     "loguru==0.7.3",
-    "mlflow==3.5.0",
+    "mlflow==3.5.1",
     "opensearch-py==3.0.0",
     "pydantic==2.12.3",
 ]
